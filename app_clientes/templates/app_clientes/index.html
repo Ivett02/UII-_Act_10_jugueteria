@@ -1,0 +1,118 @@
+{% extends "app_clientes/base.html" %}
+
+{% block body %}
+<h3 class="m-4">Todos los Clientes</h3>
+
+<div class="row">
+    <div class="col-12">
+
+        {% if clientes %}
+        <div class="card bg-light ms-4 me-4 mb-4">
+            <div class="card-header">
+                <i class="fas fa-list fa-lg"></i> Registros de clientes
+            </div>
+
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle">
+                        <thead class="table-primary">
+                            <tr>
+                                <th>Nombre</th>
+                                <th>Apellido</th>
+                                <th>Edad</th>
+                                <th>Dirección</th>
+                                <th>Teléfono</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for cliente in clientes %}
+                            <tr>
+                                <td>{{ cliente.nombre }}</td>
+                                <td>{{ cliente.apellido }}</td>
+                                <td>{{ cliente.edad }}</td>
+                                <td>{{ cliente.direccion }}</td>
+                                <td>{{ cliente.telefono }}</td>
+                                <td>
+                                    <!-- Botón Info -->
+                                    <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modalCliente{{ cliente.id }}">
+                                        <i class="fa-solid fa-circle-info"></i>
+                                    </button>
+
+                                    <!-- Botón Editar -->
+                                    <a class="btn btn-warning me-1" href="{% url 'edit' cliente.id %}">
+                                        <i class="fa-solid fa-pen-to-square fa-lg"></i>
+                                    </a>
+
+                                    <!-- Botón Eliminar -->
+                                    <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#delete{{ cliente.id }}">
+                                        <i class="fa-solid fa-trash fa-lg"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modales de Info -->
+        {% for cliente in clientes %}
+        <div class="modal fade" id="modalCliente{{ cliente.id }}" tabindex="-1" aria-labelledby="modalLabel{{ cliente.id }}" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="modalLabel{{ cliente.id }}">
+                            Cliente: {{ cliente.nombre }} {{ cliente.apellido }}
+                        </h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <ul class="list-unstyled">
+                            <li><strong>Nombre:</strong> {{ cliente.nombre }}</li>
+                            <li><strong>Apellido:</strong> {{ cliente.apellido }}</li>
+                            <li><strong>Edad:</strong> {{ cliente.edad }}</li>
+                            <li><strong>Dirección:</strong> {{ cliente.direccion }}</li>
+                            <li><strong>Teléfono:</strong> {{ cliente.telefono }}</li>
+                        </ul>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Cerrar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+
+        <!-- Modales de Delete -->
+        {% for cliente in clientes %}
+        <div class="modal fade" id="delete{{ cliente.id }}" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Eliminar Cliente</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        ¿Estás seguro que deseas eliminar a {{ cliente.nombre }} {{ cliente.apellido }}?
+                    </div>
+                    <div class="modal-footer">
+                        <form method="POST" action="{% url 'delete' cliente.id %}">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-danger">Eliminar</button>
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+
+        {% else %}
+        <h5 class="alert alert-primary ms-4 me-4">No hay registros de clientes</h5>
+        {% endif %}
+
+    </div>
+</div>
+{% endblock %}
